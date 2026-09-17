@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+
+    <title>SVG to Alight Motion XML</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script
+      src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.4/dist/dotlottie-wc.js"
+      type="module"
+    ></script>
+  </head>
+
+  <!--
+OUTPUT RULE:
+- Input/preview SVG: animations remain untouched.
+- Generated XML: SVG animation nodes are omitted.
+- Geometry belonging to animated elements remains.
+- opacity=0 remains; it is not used as a reason to discard geometry.
+-->
+
+  <body>
+    <!-- <div style="font-size:12px;opacity:.75;margin-top:6px">
+  Preview tetap menjalankan animasi SVG. Saat XML dibuat, animasi dibuang,
+  tetapi geometry/element yang dianimasikan tetap dipertahankan.
+</div>
+
+<div style="font-size:12px;opacity:.75;margin-top:6px">
+  Animasi SVG tetap dibaca saat upload/preview. Saat XML dibuat, data animasi
+  dibuang, tetapi geometry/element-nya tetap dipertahankan.
+</div> -->
+
+    <header class="header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>SVG → Alight Motion XML</h1>
+          <p>
+            Convert SVG menjadi Vector Drawing yang lebih kompatibel dengan
+            Alight Motion.
+          </p>
+        </div>
+
+        <div class="header-right">
+          <src="https://lottie.host/embed/63379fc6-1368-4bcc-8770-3c569f935ad6/xAoOVWOKk4.lottie"></iframe>
+
+
+          <div class="header-badge">
+            <span>Dannz AM</span>
+            <small>SVG Converter</small>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="grid">
+        <!-- =====================================================
+     LEFT
+===================================================== -->
+
+        <div>
+          <div class="card">
+            <h2>Upload SVG</h2>
+
+            <div class="drop" id="drop">
+              <strong>Pilih SVG</strong>
+              <span>atau drag & drop SVG ke sini</span>
+            </div>
+
+            <input type="file" id="file" accept=".svg,image/svg+xml" />
+
+            <div class="field">
+              <label>Nama XML</label>
+
+              <input type="text" id="projectName" value="My Vector" />
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>Durasi</label>
+
+                <input
+                  type="number"
+                  id="duration"
+                  value="5"
+                  min="0.1"
+                  step="0.1"
+                />
+              </div>
+
+              <div class="field">
+                <label>FPS</label>
+
+                <input type="number" id="fps" value="30" min="1" step="1" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Canvas AM</label>
+
+              <div class="row">
+                <input type="number" id="canvasWidth" value="1080" min="1" />
+
+                <input type="number" id="canvasHeight" value="1080" min="1" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Warna fallback</label>
+
+              <div class="color-row">
+                <input type="color" id="color" value="#ffffff" />
+
+                <input type="text" id="colorText" value="#FFFFFF" />
+              </div>
+            </div>
+
+            <label class="check">
+              <input type="checkbox" id="forceColor" />
+
+              Paksa semua vector menggunakan warna ini
+            </label>
+
+            <label class="check">
+              <input type="checkbox" id="mergeDuplicates" />
+
+              Hapus duplicate vector
+            </label>
+
+            <button class="btn-main" id="convert">CONVERT KE XML</button>
+
+            <div class="buttons">
+              <button class="btn-secondary" id="copy">
+                COPY
+
+                <dotlottie-wc
+                  src="https://lottie.host/815ce464-752e-4733-b614-c0d2fdf91753/Rs4sVnz51b.lottie"
+                  style="
+                    width: 50px;
+                    height: 50px;
+                    align-items: center;
+                    justify-content: center;
+                    display: inline-flex;
+                    margin-left: 6px;
+                  "
+                  autoplay
+                  loop
+                ></dotlottie-wc>
+              </button>
+
+              <button class="btn-secondary" id="download">
+                DOWNLOAD
+
+                <dotlottie-wc
+                  src="https://lottie.host/e346a9b7-86bd-435e-bc8f-0889fd855f67/PRP4AUQ8xz.lottie"
+                  style="
+                    width: 50px;
+                    height: 50px;
+                    align-items: center;
+                    justify-content: center;
+                    display: inline-flex;
+                    margin-left: 6px;
+                  "
+                  autoplay
+                  loop
+                ></dotlottie-wc>
+              </button>
+
+              <button class="btn-danger" id="clear">
+                CLEAR
+
+                <dotlottie-wc
+                  src="https://lottie.host/5659d14b-22ff-45f9-bcca-70e33fae404d/9yDFHPyjuV.lottie"
+                  style="
+                    width: 50px;
+                    height: 50px;
+                    align-items: center;
+                    justify-content: center;
+                    display: inline-flex;
+                    margin-left: 6px;
+                  "
+                  autoplay
+                  loop
+                ></dotlottie-wc>
+              </button>
+            </div>
+
+            <div class="status" id="status">Belum ada SVG.</div>
+          </div>
+
+          <div class="card" style="margin-top: 20px">
+            <h2>Statistik</h2>
+
+            <div class="stats">
+              <div class="stat">
+                <b id="elements">0</b>
+                <span>ELEMENT</span>
+              </div>
+
+              <div class="stat">
+                <b id="rawVectors">0</b>
+                <span>RAW VECTOR</span>
+              </div>
+
+              <div class="stat">
+                <b id="finalVectors">0</b>
+                <span>FINAL VECTOR</span>
+              </div>
+
+              <div class="stat">
+                <b id="duplicates">0</b>
+                <span>DUPLICATE</span>
+              </div>
+            </div>
+
+            <div class="info">
+              Path yang benar-benar kosong akan dibuang. Duplicate hanya dibuang
+              jika geometry, posisi, warna dan opacity-nya sama. Shape yang sama
+              tetapi berada di lokasi berbeda tidak akan dihapus. Ukuran SVG
+              akan disesuaikan ke canvas AM dengan mempertahankan aspect ratio.
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================================
+     RIGHT
+===================================================== -->
+
+        <div>
+          <div class="card">
+            <h2>Preview</h2>
+
+            <div class="preview" id="preview">
+              <div class="empty">Upload SVG terlebih dahulu</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 20px">
+            <h2>XML Output</h2>
+
+            <textarea
+              id="output"
+              spellcheck="false"
+              placeholder="XML akan muncul di sini..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
